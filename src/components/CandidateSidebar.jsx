@@ -36,6 +36,11 @@ export default function CandidateSidebar() {
           <span>Dashboard</span>
         </NavLink>
 
+        <NavLink to="/candidate/profile">
+          <i className="bx bx-user-circle"></i>
+          <span>My Profile</span>
+        </NavLink>
+
         <NavLink to="/candidate/assessment">
           <i className="bx bx-code-alt"></i>
           <span>Code Assessment</span>

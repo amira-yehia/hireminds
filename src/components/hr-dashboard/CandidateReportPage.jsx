@@ -179,7 +179,7 @@ function ReportSidebar({ onNavigate }) {
       </div>
 
       <button type="button" className="report-switch-link">
-        Switch to Candidate Portal ->
+        Switch to Candidate Portal &rarr;
       </button>
     </aside>
   );

@@ -6,6 +6,7 @@ import AOS from "aos";
 import Feature from "./Features";
 import Scoring from "./Scoring";
 import HowItWorks from "./HowItWorks";
+import Footer from "./Footer";
 
 import "aos/dist/aos.css";
 
@@ -26,6 +27,7 @@ export default function Home() {
       <CardSlider />
       <HowItWorks />
       <Scoring />
+      <Footer />
     </div>
   );
 }
