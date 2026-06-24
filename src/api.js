@@ -79,19 +79,21 @@ export const authAPI = {
     );
   },
   /** Logout current session */
+  // logout: async () => {
+  //   try {
+  //     await fetch(`${BASE_URL}/api/Auth/logout`, {
+  //       method: "POST",
+  //       headers: authHeaders(),
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //   } finally {
+  //     clearSession();
+  //   }
+  // },
   logout: async () => {
-    try {
-      await fetch(`${BASE_URL}/api/Auth/logout`, {
-        method: "POST",
-        headers: authHeaders(),
-      });
-    } catch (err) {
-      console.log(err);
-    } finally {
-      clearSession();
-    }
+    clearSession();
   },
-
   /** Refresh access token */
   refreshToken: (data) => request("POST", "/api/Auth/Refresh-token", data),
 
@@ -102,7 +104,6 @@ export const authAPI = {
   verifyEmail: (token) =>
     request("GET", `/api/Auth/verify-email?token=${token}`),
 
-  /** Resend verification email */
   /** Resend verification email */
   resendVerification: (email) =>
     request(

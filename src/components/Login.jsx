@@ -7,6 +7,8 @@ import {
   FaLinkedin,
   FaLock,
   FaUser,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa";
 import { authAPI, saveSession } from "../api";
 import { getRoleFromToken } from "../api";
@@ -22,7 +24,7 @@ export default function Login({ handleClose }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleChange = (e) =>
     setForm((prev) => ({
       ...prev,
@@ -37,13 +39,13 @@ export default function Login({ handleClose }) {
     try {
       const data = await authAPI.login(form);
 
-      saveSession(data);
+      console.log("LOGIN RESPONSE:", data);
 
-      console.log(data);
+      saveSession(data);
 
       const role = getRoleFromToken(data.accessToken)?.toLowerCase();
 
-      console.log(role);
+      console.log("ROLE:", role);
 
       if (role === "admin") {
         navigate("/admin-dashboard");
@@ -126,7 +128,7 @@ export default function Login({ handleClose }) {
 
         <div className="input-box">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
             value={form.password}
@@ -134,8 +136,11 @@ export default function Login({ handleClose }) {
             required
           />
 
-          <i>
-            <FaLock />
+          <i
+            style={{ cursor: "pointer" }}
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </i>
         </div>
 

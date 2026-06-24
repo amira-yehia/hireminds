@@ -37,12 +37,11 @@ export default function ResetPassword() {
     setMessage("");
 
     try {
-      await authAPI.resetPassword({
+      const result = await authAPI.resetPassword({
         userId,
         token,
         newPassword: form.newPassword,
       });
-
       setStatus("success");
       setMessage("Password reset successfully!");
 
