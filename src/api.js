@@ -1,4 +1,4 @@
-// ============================================================
+// // ============================================================
 // HireMinds API Service
 // Base: http://recruitermentsystem.runasp.net
 // ============================================================
@@ -71,6 +71,7 @@ export const authAPI = {
       return text;
     }
   },
+
   /** Login → returns { accessToken, refreshToken, role, userId } */
   login: ({ email, password }) => {
     return request(
@@ -78,22 +79,12 @@ export const authAPI = {
       `/api/Auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
     );
   },
+
   /** Logout current session */
-  // logout: async () => {
-  //   try {
-  //     await fetch(`${BASE_URL}/api/Auth/logout`, {
-  //       method: "POST",
-  //       headers: authHeaders(),
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //   } finally {
-  //     clearSession();
-  //   }
-  // },
   logout: async () => {
     clearSession();
   },
+
   /** Refresh access token */
   refreshToken: (data) => request("POST", "/api/Auth/Refresh-token", data),
 
@@ -110,12 +101,14 @@ export const authAPI = {
       "POST",
       `/api/Auth/resend-verification?email=${encodeURIComponent(email)}`,
     ),
+
   /** Send forget-password email */
   forgetPassword: (email) =>
     request(
       "POST",
       `/api/Auth/forget-password?email=${encodeURIComponent(email)}`,
     ),
+
   /** Reset password with token */
   resetPassword: ({ userId, token, newPassword }) =>
     request(
@@ -126,6 +119,7 @@ export const authAPI = {
         token,
       )}&newPassword=${encodeURIComponent(newPassword)}`,
     ),
+
   /** Revoke all tokens for the current user */
   revokeAll: () => request("POST", "/api/Auth/revoke-all"),
 
@@ -139,7 +133,6 @@ export const authAPI = {
 // ================================================================
 // CANDIDATE  →  /api/Candidate
 // ================================================================
-// Candidate APIs
 export const candidateAPI = {
   getProfile: (userId) => request("GET", `/api/Candidate/${userId}`),
 
@@ -178,6 +171,7 @@ export const candidateAPI = {
     return response.json();
   },
 };
+
 // ================================================================
 // APPLICATIONS  →  /api/Applications
 // ================================================================
@@ -197,28 +191,17 @@ export const applicationsAPI = {
 // JOBS  →  /api/jobs
 // ================================================================
 export const jobsAPI = {
-  /**
-   * Create a new job post
-   * @param {CreateJobDto} data
-   */
   create: (data) => request("POST", "/api/jobs", data),
 
-  /**
-   * Get all jobs (with optional filters)
-   * @param {JobQueryParametersDto} params - { title, location, status, page, pageSize }
-   */
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
     return request("GET", `/api/jobs${query ? `?${query}` : ""}`);
   },
 
-  /** Get single job by id */
   getById: (id) => request("GET", `/api/jobs/${id}`),
 
-  /** Update a job */
   update: (id, data) => request("PUT", `/api/jobs/${id}`, data),
 
-  /** Delete a job */
   delete: (id) => request("DELETE", `/api/jobs/${id}`),
 };
 
@@ -226,13 +209,10 @@ export const jobsAPI = {
 // RECRUITERS  →  /api/recruiters
 // ================================================================
 export const recruitersAPI = {
-  /** Get recruiter profile by userId */
   getProfile: (userId) => request("GET", `/api/recruiters/${userId}`),
 
-  /** Update recruiter profile */
   updateProfile: (data) => request("PUT", "/api/recruiters", data),
 
-  /** Upload recruiter photo */
   uploadPhoto: (formData) =>
     request("POST", "/api/recruiters/upload-photo", formData, true),
 };
@@ -241,19 +221,10 @@ export const recruitersAPI = {
 // COMPANY  →  /Api/Comapny  (note: API typo "Comapny")
 // ================================================================
 export const companyAPI = {
-  /** Get all companies */
   getAll: () => request("GET", "/Api/Comapny"),
-
-  /** Get company by id */
   getById: (id) => request("GET", `/Api/Comapny/${id}`),
-
-  /** Create company */
   create: (data) => request("POST", "/Api/Comapny", data),
-
-  /** Update company */
   update: (data) => request("PUT", "/Api/Comapny", data),
-
-  /** Delete company */
   delete: (id) => request("DELETE", `/Api/Comapny/${id}`),
 };
 
@@ -290,11 +261,34 @@ export const usersAPI = {
 // ================================================================
 // Auth Context helpers
 // ================================================================
+
+/**
+ * Save session to localStorage.
+ * Falls back to extracting role/userId from the token if the
+ * backend didn't return them as top-level fields.
+ */
 export const saveSession = ({ accessToken, refreshToken, role, userId }) => {
-  localStorage.setItem("accessToken", accessToken);
-  localStorage.setItem("refreshToken", refreshToken);
-  localStorage.setItem("role", role);
-  localStorage.setItem("userId", userId);
+  // Guard against saving the literal string "undefined" / "null"
+  const safeSet = (key, value) => {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "undefined" &&
+      value !== "null"
+    ) {
+      localStorage.setItem(key, value);
+    }
+  };
+
+  safeSet("accessToken", accessToken);
+  safeSet("refreshToken", refreshToken);
+
+  // role & userId might be missing from the response — extract from token
+  const tokenRole = role || getRoleFromToken(accessToken);
+  const tokenUserId = userId || getUserIdFromToken(accessToken);
+
+  safeSet("role", tokenRole);
+  safeSet("userId", tokenUserId);
 };
 
 export const clearSession = () => {
@@ -303,22 +297,49 @@ export const clearSession = () => {
   );
 };
 
-export const getSession = () => ({
-  accessToken: localStorage.getItem("accessToken"),
-  refreshToken: localStorage.getItem("refreshToken"),
-  role: localStorage.getItem("role"),
-  userId: localStorage.getItem("userId"),
-});
+export const getSession = () => {
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+  const userId = localStorage.getItem("userId");
 
+  // Always derive role live from the token — never trust the stored string alone
+  const storedRole = localStorage.getItem("role");
+  const role = storedRole || getRoleFromToken(accessToken);
+
+  return { accessToken, refreshToken, role, userId };
+};
+
+/** Extract role from a JWT issued by ASP.NET Identity */
 export const getRoleFromToken = (token) => {
   if (!token) return null;
 
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
 
-    return payload[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ];
+    return (
+      payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
+      payload["role"] ||
+      null
+    );
+  } catch {
+    return null;
+  }
+};
+
+/** Extract userId (sub / nameidentifier) from a JWT */
+export const getUserIdFromToken = (token) => {
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
+    return (
+      payload[
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+      ] ||
+      payload["sub"] ||
+      null
+    );
   } catch {
     return null;
   }
