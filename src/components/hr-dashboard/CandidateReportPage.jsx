@@ -1,5 +1,3 @@
-// import React, { useEffect } from "react";
-// import "./CandidateReportPage.css";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { candidateAPI } from "../../api";
@@ -82,7 +80,7 @@ function RadarChart({ radar }) {
 
   const polygonPoints = values
     .map((value, index) => {
-      const angle = (-Math.PI / 2) + (index * Math.PI * 2) / values.length;
+      const angle = -Math.PI / 2 + (index * Math.PI * 2) / values.length;
       const pointRadius = (value / 100) * radius;
       const x = centerX + Math.cos(angle) * pointRadius;
       const y = centerY + Math.sin(angle) * pointRadius;
@@ -92,7 +90,7 @@ function RadarChart({ radar }) {
     .join(" ");
 
   const axisLines = labels.map((label, index) => {
-    const angle = (-Math.PI / 2) + (index * Math.PI * 2) / labels.length;
+    const angle = -Math.PI / 2 + (index * Math.PI * 2) / labels.length;
     const x = centerX + Math.cos(angle) * radius;
     const y = centerY + Math.sin(angle) * radius;
     const labelX = centerX + Math.cos(angle) * (radius + 22);
@@ -111,7 +109,7 @@ function RadarChart({ radar }) {
   const gridPolygons = [20, 40, 60, 80, 100].map((step) => {
     const points = labels
       .map((_, index) => {
-        const angle = (-Math.PI / 2) + (index * Math.PI * 2) / labels.length;
+        const angle = -Math.PI / 2 + (index * Math.PI * 2) / labels.length;
         const pointRadius = (step / 100) * radius;
         const x = centerX + Math.cos(angle) * pointRadius;
         const y = centerY + Math.sin(angle) * pointRadius;
@@ -124,7 +122,12 @@ function RadarChart({ radar }) {
   });
 
   return (
-    <svg className="radar-svg" viewBox="0 0 220 220" role="img" aria-label="Skill radar">
+    <svg
+      className="radar-svg"
+      viewBox="0 0 220 220"
+      role="img"
+      aria-label="Skill radar"
+    >
       <g className="radar-grid">{gridPolygons}</g>
       <g className="radar-axis">{axisLines}</g>
       <polygon className="radar-shape" points={polygonPoints} />
@@ -151,7 +154,11 @@ function ReportSidebar({ onNavigate }) {
         <p className="report-menu-title">HR PORTAL</p>
 
         <nav className="report-menu">
-          <button type="button" className={itemClass("overview")} onClick={() => onNavigate("overview")}>
+          <button
+            type="button"
+            className={itemClass("overview")}
+            onClick={() => onNavigate("overview")}
+          >
             <span className="report-menu-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
                 <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z" />
@@ -159,7 +166,11 @@ function ReportSidebar({ onNavigate }) {
             </span>
             <span>Overview</span>
           </button>
-          <button type="button" className={itemClass("candidates")} onClick={() => onNavigate("candidates")}>
+          <button
+            type="button"
+            className={itemClass("candidates")}
+            onClick={() => onNavigate("candidates")}
+          >
             <span className="report-menu-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
                 <path d="M16.2 11.2a3.2 3.2 0 1 0-2.6-5.85 4.2 4.2 0 1 0-3.2 7.35h5.8zM8.2 12.2a3.2 3.2 0 1 0-2.8-5 4 4 0 0 0-.2 7.99h3zM2.8 18.8c0-2.3 2.6-3.8 5.4-3.8s5.4 1.5 5.4 3.8V20H2.8v-1.2zm10.2 1.2v-1.2c0-1-.3-1.9-.9-2.6a10 10 0 0 1 3.6-.7c2.8 0 5.5 1.5 5.5 3.8V20H13z" />
@@ -179,6 +190,8 @@ function ReportSidebar({ onNavigate }) {
       </div>
 
       <button type="button" className="report-switch-link">
+        {/* Switch to Candidate Portal
+        <i className="bx bx-right-arrow-alt"></i> */}
         Switch to Candidate Portal &rarr;
       </button>
     </aside>
@@ -200,36 +213,36 @@ export default function CandidateReportPage() {
       .finally(() => setLoading(false));
   }, [id]);
   const activeCandidate = {
-  initials:
-    candidate?.fullName
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "CA",
+    initials:
+      candidate?.fullName
+        ?.split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase() || "CA",
 
-  name: candidate?.fullName || "Candidate",
+    name: candidate?.fullName || "Candidate",
 
-  role: candidate?.seniorityLevel || "Software Engineer",
+    role: candidate?.seniorityLevel || "Software Engineer",
 
-  email: candidate?.email || "",
+    email: candidate?.email || "",
 
-  cv: 88,
-  code: 92,
-  interview: 85,
-  total: 89,
+    cv: 88,
+    code: 92,
+    interview: 85,
+    total: 89,
 
-  radar: fallbackRadar,
+    radar: fallbackRadar,
 
-  codingResults: fallbackCodingResults,
+    codingResults: fallbackCodingResults,
 
-  codingSummary: fallbackCodingSummary,
+    codingSummary: fallbackCodingSummary,
 
-  interviewAnalysis: fallbackInterviewAnalysis,
+    interviewAnalysis: fallbackInterviewAnalysis,
 
-  fairness:
-    "AI scoring dimensions passed fairness checks. Evaluation focused strictly on demonstrated skills and interview performance.",
-};
+    fairness:
+      "AI scoring dimensions passed fairness checks. Evaluation focused strictly on demonstrated skills and interview performance.",
+  };
 
   const radar = activeCandidate.radar || fallbackRadar;
   const codingResults = activeCandidate.codingResults || fallbackCodingResults;
@@ -257,26 +270,26 @@ export default function CandidateReportPage() {
       document.title = previousTitle;
     }, 300);
   };
-if (loading) {
+  if (loading) {
+    return (
+      <div className="report-page">
+        <main className="report-content">
+          <h2>Loading report...</h2>
+        </main>
+      </div>
+    );
+  }
   return (
     <div className="report-page">
-      <main className="report-content">
-        <h2>Loading report...</h2>
-      </main>
-    </div>
-  );
-}
-  return (
-    <div className="report-page">
-       <ReportSidebar
-      onNavigate={(page) => {
-        if (page === "overview") {
-          navigate("/hr-dashboard");
-        } else if (page === "candidates") {
-          navigate("/hr-dashboard/candidates");
-        }
-      }}
-    />
+      <ReportSidebar
+        onNavigate={(page) => {
+          if (page === "overview") {
+            navigate("/hr-dashboard");
+          } else if (page === "candidates") {
+            navigate("/hr-dashboard/candidates");
+          }
+        }}
+      />
 
       <main className="report-content">
         <div className="report-shell">
@@ -292,11 +305,18 @@ if (loading) {
               <div>
                 <span className="report-eyebrow">Candidate insights</span>
                 <h1>Candidate Report</h1>
-                <p>Detailed AI-generated evaluation with technical and fairness signals.</p>
+                <p>
+                  Detailed AI-generated evaluation with technical and fairness
+                  signals.
+                </p>
               </div>
             </div>
             <div className="report-header-actions">
-              <button type="button" className="export-btn" onClick={handleExportPdf}>
+              <button
+                type="button"
+                className="export-btn"
+                onClick={handleExportPdf}
+              >
                 Export PDF
               </button>
             </div>
@@ -339,7 +359,9 @@ if (loading) {
             <article className="report-card">
               <div className="report-card-head">
                 <div>
-                  <span className="report-card-kicker">Technical assessment</span>
+                  <span className="report-card-kicker">
+                    Technical assessment
+                  </span>
                   <h3>Coding Assessment Results</h3>
                 </div>
               </div>

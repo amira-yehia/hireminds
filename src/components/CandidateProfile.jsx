@@ -185,7 +185,10 @@ export default function CandidateProfile() {
           <ProfileSection icon="bx-briefcase-alt-2" title="Featured Projects">
             <div className="candidate-profile-projects">
               {fallbackProfile.projects.map((project) => (
-                <article className="candidate-profile-project" key={project.title}>
+                <article
+                  className="candidate-profile-project"
+                  key={project.title}
+                >
                   <div>
                     <h3>{project.title}</h3>
                     <i className="bx bx-link-external"></i>
@@ -204,7 +207,10 @@ export default function CandidateProfile() {
           <ProfileSection icon="bx-briefcase" title="Experience">
             <div className="candidate-profile-timeline">
               {fallbackProfile.experience.map((item) => (
-                <article className="candidate-profile-timeline-item" key={item.role}>
+                <article
+                  className="candidate-profile-timeline-item"
+                  key={item.role}
+                >
                   <div>
                     <h3>{item.role}</h3>
                     <span>{item.date}</span>

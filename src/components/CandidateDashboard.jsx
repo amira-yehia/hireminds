@@ -130,6 +130,9 @@ export default function CandidateDashboard() {
                 </>
               )}
 
+              {/* <button className="candidate-wide-button" type="button">
+                View My Portfolio
+              </button> */}
               <Link className="candidate-wide-button" to="/candidate/profile">
                 View My Profile
               </Link>

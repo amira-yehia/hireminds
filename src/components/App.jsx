@@ -4,6 +4,7 @@ import Home from "./Home";
 import AuthPage from "./AuthPage";
 import ProtectedRoute from "./ProtectedRoute";
 
+import CandidateProfile from "./CandidateProfile";
 import CandidateDashboard from "./CandidateDashboard";
 import CandidateProfile from "./CandidateProfile";
 import CandidateAssessment from "./CandidateAssessment";
@@ -48,6 +49,9 @@ export default function App() {
       <Route path="/change-password" element={<ChangePassword />} />
 
       {/* ── Candidate Portal ── */}
+      {/* <Route path="/candidate" element={<CandidateDashboard />} />
+      <Route path="/candidate/assessment" element={<CandidateAssessment />} />
+      <Route path="/candidate/interview" element={<CandidateInterview />} /> */}
       <Route
         path="/candidate"
         element={
@@ -82,6 +86,7 @@ export default function App() {
       />
       <Route
         path="/hr-dashboard/reports/:id"
+        // element={<CandidateReportPage />}
         element={
           <ProtectedRoute allowedRoles={["recruiter"]}>
             <CandidateReportPage />
@@ -89,6 +94,11 @@ export default function App() {
         }
       />
       {/* ── HR Portal ── */}
+      {/* <Route path="/hr-dashboard" element={<HRDashboard />} />
+      <Route path="/hr-dashboard/profile" element={<HRProfile />} />
+      <Route path="/hr-dashboard/create-job" element={<CreateJob />} />
+      <Route path="/hr-dashboard/jobs" element={<HRJobs />} />
+      <Route path="/hr-dashboard/candidates" element={<HRCandidates />} /> */}
       <Route
         path="/hr-dashboard"
         element={
@@ -132,6 +142,8 @@ export default function App() {
       {/* /hr-dashboard/reports/:id — add HRReportPage here when ready */}
 
       {/* ── Admin Portal ── */}
+      {/* <Route path="/admin-dashboard" element={<AdminDashboardApp />} />
+      <Route path="/admin" element={<AdminDashboardApp />} /> */}
       <Route
         path="/admin-dashboard"
         element={
